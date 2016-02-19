@@ -114,3 +114,51 @@ Startup.cs tem um ConfigureAuth(app) onde está a "magia"
 OAuth dá sempre AppID e AppSecret, depois podemos ir a App_Start e StartupAuth inserir os dados nos campos respectivos
 
 Podemos adicionar campos como data de nascimento do user etc adicionando esses campos em Models/IdentityModels.cs e actualizando a view
+
+# [Developing ASP.NET MVC 4 Web Applications Jump Start](https://mva.microsoft.com/en-US/training-courses/developing-aspnet-mvc-4-web-applications-jump-start-8239?l=fwYCcoJy_2404984382)
+
+## Introduction to MVC
+
+Models encapsulate objects and data
+Views generate the user interface
+Controllers interact with user actions
+
+## Developing ASP.NET MVC Models
+
+Considerando este código:
+
+```
+[Required(ErrorMessage = "{0} is required")]
+[Display(Name = "Speaker Name")]
+public String Name { get; set; }
+```
+
+Escrevendo `{0}` garante que ele chamará o nome da variável presente em `[Display]`
+
+Partial/"Buddy class":
+
+```
+[MetadataType(typeof(SpeakerMetadata))]
+public partial class Speaker
+```
+
+Exemplo de um DbContext:
+
+```
+namespace Conference.Models
+{
+  public class ConferenceContext : DbContext
+  {
+    public DbSet<Session> Sessions { get; set; }
+    public DbSet<Speaker> Speakers { get; set; }
+  }
+}
+```
+
+O `virtual` funciona como foreign key e permite lazy loading entre os 2
+
+`public class ConferenceContextInitializer : DropCreateDatabaseAlways<ConferenceContext>` se quisermos começar sempre de novo na database
+
+Workflows possíveis Entity Framework: Code First, Database First, Model First.
+
+## Developing MVC Controllers
