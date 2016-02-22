@@ -329,3 +329,24 @@ SignalR => Web Sockets
 O SignalR gera o JavaScript necessário
 
 # Implementing Entity Framework with MVC
+
+## Introduction to Entity Framework
+
+Entity Framework = Object Relational Mapping
+
+1. Maps your database types to your code types
+2. Avoids repetitive data access code
+
+EF6 requires Visual Studio 2010 or greater - instala-se via NuGet e faz parte do MVC, Web Forms e Web API templates com Identity
+
+`Install-Package EntityFramework`
+
+## Beginning Code First
+
+## Managing Relationships
+
+## Managing the database
+
+## Managing transactions
+
+## Integrating Extra Features and Looking Forward
