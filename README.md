@@ -343,10 +343,106 @@ EF6 requires Visual Studio 2010 or greater - instala-se via NuGet e faz parte do
 
 ## Beginning Code First
 
+Convenções:
+
+1. Tabelas ficam automaticamente no plural
+2. Tabelas são criadas no dbo schema
+3. O ID é sempre a chave primária
+
+Vai sempre procurar por ID ou ClassID
+
+Default: Nullable nvarchar(max)
+
+StringLengthAttribute: MaximumLength e MinimumLength
+RangeAttribute: Maximum e Minimum
+RequiredAttribute
+
+Find() method:
+
+- Aceita um parâmetro para o associar à chave
+- Retorna null se não encontrar
+
 ## Managing Relationships
+
+One to Many Relationships
+
+```
+public Artist Artist { get; set; }
+public List<Album> Albums { get; set; }
+```
+
+E depois no Context:
+
+```
+public DbSet<Album> Albums { get; set; }
+```
+
+`Update-Database` no terminal
+
+Erro: "Object reference no set to an instance of an object" surge porque temos que adicionar uma foreign key (eg: "ArtistID" for Artist)
+
+Para resolver:
+
+```
+public int ArtistID { get; set; }
+public virtual Artist Artist { get; set;  }
+```
+
+O default é One to Many, relações One-to-One têm que ser explicitamente criadas com uma ForeignKey na child class
+O default Delete Rule é "Cascade", o que significa que se eliminarmos um artista, eliminamos todos os albuns que lá estão - podemos mudar com o Fluent API
+
+Para indicar qual é a ForeignKey, para a relação One-to-One:
+
+`[ForeignKey("Artist")]`
+
+Para Many-to-Many, é necessário criar uma "join table", adicionando propriedades nos 2 lados
+
+Para inheritance, precisamos de uma Discriminator column
 
 ## Managing the database
 
+**Fluent API:**
+
+- Keeps domain classes clean - configuration in separate section
+- More supported operations (advanced mappsings, datetimeprecision, fixed length)
+- Use it for domain entities
+- Very readable method cascading: `modeBuilder.Entity<Album>().Property(t => t.Name).IsRequired().HasMaxLength(60);`
+
+**Code First Migrations:**
+
+- Code created under default `Migrations` folder
+- Each new Migration (`add-migration`) adds new code
+- Can overwrite/update existing migrations
+
+**Updating existing migrations:**
+
+- Add-migration AddedShipInfo
+- Developer adds more properties to ShipInfo class
+- Add-migration AddedShipInfo (updates existing migration)
+
+`update-database -script`
+
+**Fluent API** allows mapping scenarios:
+
+- Any column name to any field
+- Table per type - subclasses have their own table (eg: Animal, Cat, Dog)
+- Table per class
+- Entity splitting - multiple entities per table
+- Table splitting - multiple tables per entity
+
 ## Managing transactions
+
+**Web Applications:** Edit Request -> Accept Request -> Load Data -> Build Form -> View Form
+
+Web Applications are stateless - EF uses entity tracking to detect changes
+
+OptimisticConcurrency (TimeStamp/RowVersion, ConcurrencyCheck to customize property)
+
+```
+[TimeStamp()]
+public byte[] RowVersion { get; set; }
+```
+
+PessimisticConcurrency (Set a flag on a row to prevent modification, requires more work) - EF does not handle it by default
 
 ## Integrating Extra Features and Looking Forward
