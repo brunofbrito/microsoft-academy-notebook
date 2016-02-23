@@ -446,3 +446,35 @@ public byte[] RowVersion { get; set; }
 PessimisticConcurrency (Set a flag on a row to prevent modification, requires more work) - EF does not handle it by default
 
 ## Integrating Extra Features and Looking Forward
+
+Web - Best practices:
+
+1. Always convert results to IEnumerable via .ToList()
+`context.Albums.Where(o=>o.Title.Contains(search).ToList()`
+
+2. Disable Lazy Loading
+- `context.Configuration.LazyLoadingEnabled = false;`
+- Use `.Include` to load related entities
+- context.Albums.Include(o=>o.AlbumDetails)
+
+3. DbContext is not thread safe. Do not cache it - Always dispose DbContext when done
+
+Watch out for...
+
+1. If you have 2+ context classes
+- one from selecting auth during app creation (Identity)
+- one for your other entities
+
+Migrations should specify separate folders
+`Enable-Migrations` - MigrationsDirectory IdentityMigrations
+`Enable-Migrations` - MigrationsDirectory MusicStoreMigrations
+
+2. For complex joins, keep an eye on queries
+
+3. Doing lots of inserts? `AutoDetectChangesEnabled = false;`
+
+EF7 new features:
+1. Designer has been removed - Code First only
+2. New data stores
+3. In memory database
+4. Update-Database now split: `Apply-Migration` and `Script-Migration`
